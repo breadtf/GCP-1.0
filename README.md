@@ -11,3 +11,5 @@ A real, toatally 100% working, 100% epic GCP client written in Python.
 
 ## (PARODY) RFC Document
 Read the (PARODY) RFC [here](RFC_PARODY.txt).
+
+The document is still being written, and is constantly updated and changed.
