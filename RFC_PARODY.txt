@@ -39,6 +39,7 @@ Table of Contents
 		1.4 Message format...................122
 		1.5 Required message types...........140
 		1.6 Headers..........................157
+		1.7 Versioning.......................175
 
 1. The only one.
 
