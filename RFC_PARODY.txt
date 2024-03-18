@@ -170,3 +170,7 @@ Table of Contents
 
 		An Address header must be sent. The Address header is used to send the IP address of the client. An Address header that does not
 		match the IP address of the peer may be disregarded.
+
+	1.7 Versioning
+
+		If one client is using a newer version of GCP than the other, the oldest version must be used by both clients.
