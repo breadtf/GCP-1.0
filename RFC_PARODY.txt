@@ -81,13 +81,13 @@ Table of Contents
 		C1 ------------------------------------ C2
 		C1 <------------------------ GCP/1.0 :3 C2 Client 2 sends :3 to acknowledge message
 		C1 ------------------------------------ C2
-		C1 GCP/1.0 TXT How are you? ----------> C2
+		C1 GCP/1.0 TXT:12 How are you? -------> C2
 		C1 ------------------------------------ C2 Any messages that do not recive an acknowledgment must be
-		C1 GCP/1.0 TXT How are you? ----------> C2 resent. After 3 fails a MEOW must be sent, if that fails
+		C1 GCP/1.0 TXT:12 How are you? -------> C2 resent. After 3 fails a MEOW must be sent, if that fails
 		C1 ------------------------------------ C2 the connection must be dead.
 		C1 <------------------------ GCP/1.0 :3 C2
 		C1 ------------------------------------ C2
-		C1 <------------------ GCP/1.0 TXT Sup! C2
+		C1 <---------------- GCP/1.0 TXT:4 Sup! C2
 		C1 ------------------------------------ C2
 		C1 GCP/1.0 :3 ------------------------> C2
 		C1 ------------------------------------ C2
@@ -100,7 +100,7 @@ Table of Contents
 		C1 GCP/1.0 MRP -----------------------> C2 Client 1 sends MRP to close the connection.
 		C1 ----------------/ /----------------- C2
 		            [CONNETION CLOSED]
-
+		(Note: Control message terminators are not shown, see 1.4 Message format.)
 
 	1.3 Example of file sharing
 
@@ -115,15 +115,17 @@ Table of Contents
 		Once both clients have acknowledged that the other supports file transfer, it is as easy as sending a "FILE" message
 		with the Base64 encoded file data.
 			
-			GCP/1.0 FILE image.jpg:4AAQSkZJRgABAQEASABIAAD...
+			GCP/1.0 FILE:5121 image.jpg:4AAQSkZJRgABAQEASABIAAD...
+
+		FILE uses the same message length format of TXT.
 
 	1.4 Message format
 
 		Messages are split up into three segments, the version info, message type and the message data.
 		
-			GCP/1.0		TXT		Hello!
-			   ^         ^		  ^
-			   |		 |        |
+			GCP/1.0	    TXT     Hello!
+			   ^         ^        ^
+			   |	     |        |
 			Version	    Type     Data
 
 		Not all messages require a data segment (Such as MEOW and MRP), but a version and type segment is required.
@@ -131,19 +133,26 @@ Table of Contents
 
 		A version header must be included with every message.
 
+		Messages must be encoded with UTF-8.
+
+		A control message must be terminated with "\r\n\r\n" (Or an empty line)
+
 	1.5 Required message types
 
 		Certian message types are required to be implemented in all clients. Below is a full list of required message types,
 		with a description of it's purpose.
 
-			NYA  - Used to start a connection. - No data.
-			OWO  - Used to send start timestamp. - Must send an integer with a unix timestamp.
-			UWU  - Used to send the client name. - Must send a string with the client name.
-			CAT  - Used to send header data. - Must send a string containing the headers for the client. (See 1.5 for more infomation)
-			TXT  - Basic message, used for sending text between clients. - Must send a string.
-			MEOW - Ping to check if the other client is alive, also used as a response. - No data.
-			:3   - Used to acknowledge the previous TXT message, must be sent every time. - No data.
-			MRP  - Used to close the connection, other client is not required to acknowledge. - No data
+			-- Control Messages --
+			NYA   - Used to start a connection. - No data.
+			OWO   - Used to send start timestamp. - Must send an integer with a unix timestamp.
+			UWU   - Used to send the client name. - Must send a string with the client name.
+			CAT   - Used to send header data. - Must send a string containing the headers for the client. (See 1.5 for more infomation)
+			MEOW  - Ping to check if the other client is alive, also used as a response. - No data.
+			:3    - Used to acknowledge the previous TXT (or FILE, if supported) message, must be sent every time. - No data.
+			MRP   - Used to close the connection, other client is not required to acknowledge. - No data
+
+			-- Text messages --
+			TXT:X - Basic message, used for sending text between clients. - Must send a string and a content length (in bytes).
 	
 	1.6 Headers
 		
