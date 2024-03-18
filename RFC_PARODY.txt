@@ -67,7 +67,7 @@ Table of Contents
 		C1 ------------------------------------ C2
 		C1 GCP/1.0 OWO 123415... -------------> C2 Client 1 send current timestamp using OWO
 		C1 ------------------------------------ C2 for picking the "leader" of the
-		C1 <------------- GCP/1.0 OWO 432431... C2 handshake, peer responds with own.
+		C1 <------------- GCP/1.0 OWO 432431... C2 handshake, Client 2 responds with own.
 		C1 ------------------------------------ C2
 		C1 GCP/1.0 UWU GCPTestClient ---------> C2 Client 1 sends client name with UWU.
 		C1 ------------------------------------ C2
@@ -79,7 +79,7 @@ Table of Contents
 		C1 ------------------------------------ C2
 		C1 GCP/1.0 TXT Hello! ----------------> C2 Handshake finished, use TXT for communication between users.
 		C1 ------------------------------------ C2
-		C1 <------------------------ GCP/1.0 :3 C2 Peer sends :3 to acknowledge message
+		C1 <------------------------ GCP/1.0 :3 C2 Client 2 sends :3 to acknowledge message
 		C1 ------------------------------------ C2
 		C1 GCP/1.0 TXT How are you? ----------> C2
 		C1 ------------------------------------ C2 Any messages that do not recive an acknowledgment must be
@@ -95,7 +95,7 @@ Table of Contents
 		C1 ------------------------------------ C2
 		C1 <---------------------- GCP/1.0 MEOW C2 Client 2 sends MEOW after 5 seconds of
 		C1 ------------------------------------ C2 inactivity to check if the connection is still alive,
-		C1 GCP/1.0 MEOW ----------------------> C2 the peer responds with a MEOW to indicate being alive
+		C1 GCP/1.0 MEOW ----------------------> C2 Client 1 responds with a MEOW to indicate being alive
 		C1 ------------------------------------ C2
 		C1 GCP/1.0 MRP -----------------------> C2 Client 1 sends MRP to close the connection.
 		C1 ----------------/ /----------------- C2
