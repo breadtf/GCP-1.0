@@ -160,14 +160,6 @@ Table of Contents
 		Headers are used for communication between clients for feature handshaking. The below format must be used for headers.
 
 			GCP/1.0 CAT Header1=Value1;Header2=Value2...
-		
-		A client can send up to 32 header pairs in a CAT message. Each header must be below 65 characters (Including the equals sign)
-
-			GCP/1.0 CAT Header1=Value1;                              VALID
-			
-			GCP/1.0 CAT Header1aaaaaa...aaa=Value1;                 INVALID
-
-			GCP/1.0 CAT Header1=Value1;Header2=Value2...=Value513   INVALID
 
 		An Address header must be sent. The Address header is used to send the IP address of the client. An Address header that does not
 		match the IP address of the peer may be disregarded.
