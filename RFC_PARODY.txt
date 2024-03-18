@@ -135,7 +135,7 @@ Table of Contents
 
 		Messages must be encoded with UTF-8.
 
-		A control message must be terminated with "\r\n\r\n" (Or an empty line)
+		A control message must be terminated with "\r\n" (Or an empty line)
 
 	1.5 Required message types
 
