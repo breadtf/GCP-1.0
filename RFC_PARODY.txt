@@ -56,6 +56,8 @@ Table of Contents
 		header
 			Extra client infomation sent along with a CAT message.
 
+		timestamp
+			Unix timestamp.
 
 	1.2 Example of a basic connection
 
