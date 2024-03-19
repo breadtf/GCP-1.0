@@ -131,10 +131,10 @@ Table of Contents
         Messages are split up into three segments, the version info,
         message type and the message data.
         
-            GCP/1.0        TXT     Hello!
+            GCP/1.0     TXT     Hello!
                ^         ^        ^
                |         |        |
-            Version        Type     Data
+            Version     Type     Data
 
         Not all messages require a data segment (Such as MEOW and MRP),
         but a version and type segment is required.
