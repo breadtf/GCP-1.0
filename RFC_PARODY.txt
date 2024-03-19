@@ -32,138 +32,167 @@ Copyright Notice
 
 Table of Contents
 
-	1. The only one.
-		1.1 Terminology.......................45
-		1.2 Example of a basic connection.....62
-		1.3 Example of file sharing..........105
-		1.4 Message format...................122
-		1.5 Required message types...........140
-		1.6 Headers..........................157
-		1.7 Versioning.......................175
+    1. The only one.
+        1.1 Terminology.......................45
+        1.2 Example of a basic connection.....62
+        1.3 Example of file sharing..........105
+        1.4 Message format...................122
+        1.5 Required message types...........140
+        1.6 Headers..........................157
+        1.7 Versioning.......................175
 
 1. The only one.
 
-	1.1 Terminology
+    1.1 Terminology
 
-		This memo uses certain terminology that may be specific to GCP.
-		Below are the defintions of all of the of the [TODO: Wordz is hardd].
+        This memo uses certain terminology that may be specific to GCP.
+        Below are the defintions.
 
-		peer
-			A user taking part in the GCP connection
+        peer
+            A user taking part in the GCP connection
 
-		handshake
-			A process that establishes the GCP connection.
+        handshake
+            A process that establishes the GCP connection.
 
-		header
-			Extra client infomation sent along with a CAT message.
+        header
+            Extra client infomation sent along with a CAT message.
 
-		timestamp
-			Unix timestamp.
+        timestamp
+            Unix timestamp.
 
-	1.2 Example of a basic connection
+    1.2 Example of a basic connection
 
-		C1 GCP/1.0 NYA -----------------------> C2 Client 1 initialises the handshake.
-		C1 ------------------------------------ C2
-		C1 <----------------------- GCP/1.0 NYA C2 Client 2 responds with NYA.
-		C1 ------------------------------------ C2
-		C1 GCP/1.0 OWO 123415... -------------> C2 Client 1 send current timestamp using OWO
-		C1 ------------------------------------ C2 for picking the "leader" of the
-		C1 <------------- GCP/1.0 OWO 432431... C2 handshake, Client 2 responds with own.
-		C1 ------------------------------------ C2
-		C1 GCP/1.0 UWU GCPTestClient ---------> C2 Client 1 sends client name with UWU.
-		C1 ------------------------------------ C2
-		C1 <--------- GCP/1.0 UWU GCPTestClient C2 Client 2 responds with client name
-		C1 ------------------------------------ C2
-		C1 GCP/1.0 CAT Address=1.2.3.4;F... --> C2 Client 1 sends headers with CAT (See 1.5).
-		C1 ------------------------------------ C2
-		C1 <-- GCP/1.0 CAT Address=4.3.2.1;F... C2 Client 2 responds with headers.
-		C1 ------------------------------------ C2
-		C1 GCP/1.0 TXT Hello! ----------------> C2 Handshake finished, use TXT for communication between users.
-		C1 ------------------------------------ C2
-		C1 <------------------------ GCP/1.0 :3 C2 Client 2 sends :3 to acknowledge message
-		C1 ------------------------------------ C2
-		C1 GCP/1.0 TXT:12 How are you? -------> C2
-		C1 ------------------------------------ C2 Any messages that do not recive an acknowledgment must be
-		C1 GCP/1.0 TXT:12 How are you? -------> C2 resent. After 3 fails a MEOW must be sent, if that fails
-		C1 ------------------------------------ C2 the connection must be dead.
-		C1 <------------------------ GCP/1.0 :3 C2
-		C1 ------------------------------------ C2
-		C1 <---------------- GCP/1.0 TXT:4 Sup! C2
-		C1 ------------------------------------ C2
-		C1 GCP/1.0 :3 ------------------------> C2
-		C1 ------------------------------------ C2
-		C1 ------- [FIVE SECONDS LATER] ------- C2
-		C1 ------------------------------------ C2
-		C1 <---------------------- GCP/1.0 MEOW C2 Client 2 sends MEOW after 5 seconds of
-		C1 ------------------------------------ C2 inactivity to check if the connection is still alive,
-		C1 GCP/1.0 MEOW ----------------------> C2 Client 1 responds with a MEOW to indicate being alive
-		C1 ------------------------------------ C2
-		C1 GCP/1.0 MRP -----------------------> C2 Client 1 sends MRP to close the connection.
-		C1 ----------------/ /----------------- C2
-		            [CONNETION CLOSED]
-		(Note: Control message terminators are not shown, see 1.4 Message format.)
+        C1 GCP/1.0 NYA ------------> C2 Client 1 initialises the
+        C1 ------------------------- C2 handshake.
+        C1 <------------ GCP/1.0 NYA C2 Client 2 responds with NYA.
+        C1 ------------------------- C2
+        C1 GCP/1.0 OWO 123415... --> C2 Client 1 and 2 exchange
+        C1 ------------------------- C2 their current timestamp to
+        C1 <-- GCP/1.0 OWO 432431... C2 determine who should lead
+        C1 ------------------------- C2 the handshake.
+        C1 GCP/1.0 UWU ClientName -> C2
+        C1 ------------------------- C2 Client 1 and 2 exchange
+        C1 <- GCP/1.0 UWU ClientName C2 client names.
+        C1 ------------------------- C2
+        C1 GCP/1.0 CAT [HEADERS] --> C2
+        C1 ------------------------- C2 Client 1 and 2 exchange
+        C1 <-- GCP/1.0 CAT [HEADERS] C2 headers with CAT (See 1.5).
+        C1 ------------------------- C2
+        C1 GCP/1.0 TXT Hello! -----> C2 Handshake finished. Users
+        C1 ------------------------- C2 can begin communicating.
+        C1 <----------    GCP/1.0 :3 C2 Client 2 sends :3 to
+        C1 ------------------------- C2 acknowledge message.
+        C1 GCP/1.0 TXT:1... -------> C2
+        C1 ------------------------- C2 Any messages that do not
+        C1 GCP/1.0 TXT:1... -------> C2 recive an acknowledgment
+        C1 ------------------------- C2 must beresent. After 3
+        C1 <------------- GCP/1.0 :3 C2 fails a MEOW must be sent,
+        C1 ------------------------- C2 if that fails the
+        C1 <----- GCP/1.0 TXT:4 Sup! C2 connection must be dead.
+        C1 ------------------------- C2
+        C1 GCP/1.0 :3 -------------> C2
+        C1 ------------------------- C2
+        C1 - [FIVE SECONDS LATER] -- C2
+        C1 ------------------------- C2
+        C1 <----------- GCP/1.0 MEOW C2 Client 2 sends MEOW after 5
+        C1 ------------------------- C2 seconds ofinactivity to
+        C1 GCP/1.0 MEOW -----------> C2 check if the connection is
+        C1 ------------------------- C2 still alive.
+        C1 GCP/1.0 MRP ------------> C2 Client 1 sends MRP to close
+        C1 -----------/ /---------- C2 the connection.
+              [CONNETION CLOSED]
 
-	1.3 Example of file sharing
+        (Note: Control message terminators are not shown, see 1.4
+         Message format.)
 
-		Due to the presence of headers, a client can send a header to indicate support for client-specific features,
-		such as file transfer. Below is the header layout for indicating file transfer.
-		
-			GCP/1.0 CAT FileTransfer=Supported;FileTransferFormat=Base64;
+    1.3 Example of file sharing
 
-		While the FileTransfer header is part of the protocol, it is not required to be implemented to be compatible with GCP,
-		though it is highly recommended for any advanced client.
+        Due to the presence of headers, a client can send a header to
+        indicate support for client-specific features,
+        such as file transfer. Below is the header layout for
+        indicating file transfer.
+        
+            GCP/1.0 CAT FileTransfer=Supported;FileTransferFormat=Base64
 
-		Once both clients have acknowledged that the other supports file transfer, it is as easy as sending a "FILE" message
-		with the Base64 encoded file data.
-			
-			GCP/1.0 FILE:5121 image.jpg:4AAQSkZJRgABAQEASABIAAD...
+        While the FileTransfer header is part of the protocol, it is not
+        required to be implemented to be compatible with GCP,
+        though it is highly recommended for any advanced client.
 
-		FILE uses the same message length format of TXT.
+        Once both clients have acknowledged that the other supports
+        file transfer, it is as easy as sending a "FILE" message
+        with the Base64 encoded file data.
+            
+            GCP/1.0 FILE:5121 image.jpg:4AAQSkZJRgABAQEASABIAAD...
 
-	1.4 Message format
+        FILE uses the same message length format of TXT.
 
-		Messages are split up into three segments, the version info, message type and the message data.
-		
-			GCP/1.0	    TXT     Hello!
-			   ^         ^        ^
-			   |	     |        |
-			Version	    Type     Data
+    1.4 Message format
 
-		Not all messages require a data segment (Such as MEOW and MRP), but a version and type segment is required.
-		Clients can create and send custom message types so long as both clients support it.
+        Messages are split up into three segments, the version info,
+        message type and the message data.
+        
+            GCP/1.0        TXT     Hello!
+               ^         ^        ^
+               |         |        |
+            Version        Type     Data
 
-		A version header must be included with every message.
+        Not all messages require a data segment (Such as MEOW and MRP),
+        but a version and type segment is required.
+        Clients can create and send custom message types so long as both
+        clients support it.
 
-		Messages must be encoded with UTF-8.
+        A version header must be included with every message.
 
-		A control message must be terminated with "\r\n" (Or an empty line)
+        Messages must be encoded with UTF-8.
 
-	1.5 Required message types
+        A control message must be terminated with "\r\n"
 
-		Certian message types are required to be implemented in all clients. Below is a full list of required message types,
-		with a description of it's purpose.
+    1.5 Required message types
 
-			-- Control Messages --
-			NYA   - Used to start a connection. - No data.
-			OWO   - Used to send start timestamp. - Must send an integer with a unix timestamp.
-			UWU   - Used to send the client name. - Must send a string with the client name.
-			CAT   - Used to send header data. - Must send a string containing the headers for the client. (See 1.5 for more infomation)
-			MEOW  - Ping to check if the other client is alive, also used as a response. - No data.
-			:3    - Used to acknowledge the previous TXT (or FILE, if supported) message, must be sent every time. - No data.
-			MRP   - Used to close the connection, other client is not required to acknowledge. - No data
+        Certian message types are required to be implemented in all
+        clients. Below is a full list of required message types,
+        with a description of it's purpose.
 
-			-- Text messages --
-			TXT:X - Basic message, used for sending text between clients. - Must send a string and a content length (in bytes).
-	
-	1.6 Headers
-		
-		Headers are used for communication between clients for feature handshaking. The below format must be used for headers.
+            -- Control Messages --
 
-			GCP/1.0 CAT Header1=Value1;Header2=Value2...
+            NYA   - Used to start a connection. - No data.
 
-		An Address header must be sent. The Address header is used to send the IP address of the client. An Address header that does not
-		match the IP address of the peer may be disregarded.
+            OWO   - Used to send start timestamp. - Must send an integer
+                                                    with a timestamp
 
-	1.7 Versioning
+            UWU   - Used to send the client name. - Must send a string
+                                                    with the client name
 
-		If one client is using a newer version of GCP than the other, the oldest version must be used by both clients.
+            CAT   - Used to send header data. - Must send a string
+                                                containing the headers
+                                                for the client
+
+            MEOW  - Ping to check if the other client is alive - No data
+                    Also used as a response.
+
+            :3    - Used to acknowledge the previous TXT - No data
+                    message,
+                    (or FILE, if supported)
+
+            MRP   - Used to close the connection - No data
+
+            -- Text messages --
+
+            TXT:X - Basic message - Must send a string and a content
+                                    length (in bytes)
+    
+    1.6 Headers
+        
+        Headers are used for communication between clients for feature
+        handshaking. The below format must be used for headers.
+
+            GCP/1.0 CAT Header1=Value1;Header2=Value2...
+
+        An Address header must be sent. The Address header is used to
+        send the IP address of the client. An Address header that does
+		not match the IP address of the peer may be disregarded.
+
+    1.7 Versioning
+
+        If one client is using a newer version of GCP than the other,
+        the oldest version must be used by both clients.
