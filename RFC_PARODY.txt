@@ -28,7 +28,7 @@ Status of This Memo
 
 Copyright Notice
 
-   Copyright (c) 2024 lololol All rights reserved.
+   Copyright (c) 2024 lololol All rights not reserved.
 
 Table of Contents
 
@@ -190,7 +190,7 @@ Table of Contents
 
         An Address header must be sent. The Address header is used to
         send the IP address of the client. An Address header that does
-		not match the IP address of the peer may be disregarded.
+	not match the IP address of the peer may be disregarded.
 
     1.7 Versioning
 
