@@ -1,0 +1,56 @@
+
+Goober Engineering Task Force (GETF)                             BreadTF
+Request For Cuties: 2                                      illegalcoding
+Updates: 1
+
+											 
+															  March 2024
+
+
+			Extensions to the CAT message type in GCP/1.0                
+
+
+Status of This Memo
+
+   This is an Internet Standards Track document.
+
+   This document is a product of the Goober Engineering Task Force
+   (GETF).  It represents the consensus of the GETF community.  It has
+   received public review and has been approved for publication by the
+   Goober Engineering Steering Group (GESG).  Further information on
+   Goober Standards is available in Section 2 of RFC 6969.
+
+Abstract
+
+  This document specifies extensions to the CAT message type in GCP/1.0.
+
+Copyright Notice
+
+   Copyright (c) 2024 lololol All rights not reserved.
+
+Table of Contents
+	1. The Extensions header
+		1.1. Syntax
+	2. The OPNAME extension
+		2.1 Examples
+
+1. The Extensions header
+	For a client to communicate it's supported extensions to it's peer, an extra header called "Extensions" shall be used.
+	This header is sent in a CAT message during the handshake process.
+
+		1.1 Syntax
+		
+			The Extensions header has a field called "Extensions", and it's value is a list of comma-separated values,
+			each corresponding to a supported extension.
+
+2. The OPNAME extension
+	To use the OPNAME extension, a client must send an Extensions header that contains "OPNAME" in
+	it's list of comma-separated values.
+
+	Another header with the field of "Operator-Name" must be included, it's value is the remote system operator's name.
+	The value of the Operator-Name extension must not contain an equals sign (=) or a semicolon (;).
+
+		2.1 Examples
+		
+			A CAT message with the OPNAME extension and the operator name "johndoe" would look like this:
+					GCP/1.0 CAT Extensions=OPNAME;Operator-Name=johndoe;
